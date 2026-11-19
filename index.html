@@ -1,1 +1,170 @@
 
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport"
+        content="width=device-width, initial-scale=1.0">
+  <title>Mi Calculadora</title>
+
+  <style>
+    body {
+      background: #151827;
+      font-family: Arial, sans-serif;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      margin: 0;
+    }
+
+    .calculadora {
+      background: #252a40;
+      padding: 25px;
+      border-radius: 20px;
+      width: 280px;
+      box-shadow: 0 10px 30px #0005;
+    }
+
+    h2 {
+      color: white;
+      text-align: center;
+    }
+
+    #pantalla {
+      width: 100%;
+      box-sizing: border-box;
+      padding: 15px;
+      font-size: 28px;
+      text-align: right;
+      border: none;
+      border-radius: 10px;
+      margin-bottom: 15px;
+      background: #eef0f8;
+    }
+
+    .botones {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 10px;
+    }
+
+    button {
+      padding: 18px 0;
+      font-size: 20px;
+      border: none;
+      border-radius: 10px;
+      background: #414861;
+      color: white;
+      cursor: pointer;
+    }
+
+    button:hover {
+      background: #59627e;
+    }
+
+    .operador {
+      background: #7654cf;
+    }
+
+    .igual {
+      background: #23a785;
+      grid-column: span 2;
+    }
+
+    .borrar {
+      background: #dc5365;
+    }
+  </style>
+</head>
+
+<body>
+
+  <div class="calculadora">
+    <h2>Mi Calculadora</h2>
+
+    <input type="text" id="pantalla"
+           readonly aria-label="Pantalla"
+           value="0">
+
+    <div class="botones">
+      <button class="borrar" onclick="limpiar()">C</button>
+      <button onclick="borrarUltimo()">⌫</button>
+      <button onclick="agregar('%')">%</button>
+      <button class="operador" onclick="agregar('/')">÷</button>
+
+      <button onclick="agregar('7')">7</button>
+      <button onclick="agregar('8')">8</button>
+      <button onclick="agregar('9')">9</button>
+      <button class="operador" onclick="agregar('*')">×</button>
+
+      <button onclick="agregar('4')">4</button>
+      <button onclick="agregar('5')">5</button>
+      <button onclick="agregar('6')">6</button>
+      <button class="operador" onclick="agregar('-')">−</button>
+
+      <button onclick="agregar('1')">1</button>
+      <button onclick="agregar('2')">2</button>
+      <button onclick="agregar('3')">3</button>
+      <button class="operador" onclick="agregar('+')">+</button>
+
+      <button onclick="agregar('0')">0</button>
+      <button onclick="agregar('.')">.</button>
+      <button class="igual" onclick="calcular()">=</button>
+    </div>
+  </div>
+
+  <script>
+    let expresion = "";
+
+    function actualizarPantalla() {
+      document.getElementById("pantalla").value =
+        expresion || "0";
+    }
+
+    function agregar(valor) {
+      expresion += valor;
+      actualizarPantalla();
+    }
+
+    function limpiar() {
+      expresion = "";
+      actualizarPantalla();
+    }
+
+    function borrarUltimo() {
+      expresion = expresion.slice(0, -1);
+      actualizarPantalla();
+    }
+
+    function calcular() {
+      try {
+        // Solo permite números y operadores matemáticos.
+        if (!/^[0-9+\-*/%. ]+$/.test(expresion)) {
+          throw new Error("Expresión inválida");
+        }
+
+        // Evalúa la expresión validada.
+        const resultado = Function(
+          '"use strict"; return (' + expresion + ')'
+        )();
+
+        if (!Number.isFinite(resultado)) {
+          throw new Error("Resultado inválido");
+        }
+
+        expresion = String(
+          Number(resultado.toPrecision(12))
+        );
+        actualizarPantalla();
+      } catch (error) {
+        expresion = "";
+        document.getElementById("pantalla").value =
+          "Error";
+      }
+    }
+  </script>
+
+</body>
+</html>
+
